@@ -31,3 +31,34 @@ jobs:
           name: playwright-report-${{ matrix.shard }}
           path: playwright-report/
           retention-days: 30
+  merge:
+    name: Merge Reports
+    if: ${{ always() }}
+    needs: [test]
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+
+      - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v3
+
+      - name: Download Merge HTML
+        run: npm install playwright-merge-html-reports --dev
+
+      - name: Run Report Merge
+        run: npm run merge
+
+      - uses: actions/upload-artifact@v3
+        if: always()
+        with:
+          name: combined-report
+          path: merge-report-demo/
+          retention-days: 3
