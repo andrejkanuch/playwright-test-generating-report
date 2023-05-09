@@ -52,19 +52,12 @@ jobs:
       contents: read
       pages: write
       id-token: write
-
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v1
+      - uses: sidharthv96/playwright-report-action
         with:
-          node-version: 16
-      - name: Merge Playwright Reports
-        uses: sidharthv96/playwright-report-action
-        with:
-          test_folders: playwright-report-1,playwright-report-2
-          output_folder: playwright-report-folder
-          delete_old_reports: true
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/upload-artifact@v3
         if: ${{ always() }}
