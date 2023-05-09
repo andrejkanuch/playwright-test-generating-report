@@ -61,7 +61,7 @@ jobs:
           node-version: 16
 
       - name: Merge Playwright Reports
-        uses: sidharthv96/playwright-report-action@v1
+        uses: sidharthv96/playwright-report-action
         with:
           test_folders: playwright-report-1,playwright-report-2
           output_folder: playwright-report-folder
