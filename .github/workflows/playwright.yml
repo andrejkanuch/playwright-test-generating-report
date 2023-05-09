@@ -77,3 +77,9 @@ jobs:
           name: combined-report
           path: playwright-report-folder/
           retention-days: 3
+          # New steps to deploy combined-report to GitHub Pages
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./playwright-report-folder/
