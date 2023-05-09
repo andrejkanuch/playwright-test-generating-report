@@ -87,7 +87,7 @@ jobs:
           git commit -m "Publish combined report for PR ${PR_ID} to GitHub Pages" || echo "No changes to commit"
           git push
 
-      - name: Setup Pages
+      - name: Setup Pages 2
         uses: actions/configure-pages@v2
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
