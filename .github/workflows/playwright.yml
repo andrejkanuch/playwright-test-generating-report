@@ -65,7 +65,6 @@ jobs:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
           restore-keys: ${{ runner.os }}-node-
-      - uses: actions/checkout@v2
       - uses: actions/download-artifact@v3
       - name: Download Merge HTML
         run: npm install playwright-merge-html-reports --dev
@@ -78,13 +77,22 @@ jobs:
           path: playwright-report-folder/
           retention-days: 3
 
+      - name: Copy report to unique folder for PR
+        if: github.event_name == 'pull_request'
+        run: |
+          PR_ID=${{ github.event.number }}
+          mkdir -p combined-report/pr-${PR_ID}
+          cp -r playwright-report-folder/* combined-report/pr-${PR_ID}/
+          git add combined-report/pr-${PR_ID}/index.html
+          git commit -m "Publish combined report for PR ${PR_ID} to GitHub Pages" || echo "No changes to commit"
+          git push
+
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          # Upload entire repository
-          path: playwright-report-folder/merged-html-report
+          path: combined-report/
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
