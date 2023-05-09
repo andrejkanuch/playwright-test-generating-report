@@ -83,6 +83,8 @@ jobs:
           PR_ID=${{ github.event.number }}
           mkdir -p combined-report/pr-${PR_ID}
           cp -r playwright-report-folder/merged-html-report/* combined-report/pr-${PR_ID}/
+          git config --global user.email "kanuchandrej@gmail.com@example.com"
+          git config --global user.name "Andrej kanuch"
           git add combined-report/pr-${PR_ID}/index.html
           git commit -m "Publish combined report for PR ${PR_ID} to GitHub Pages" || echo "No changes to commit"
           git push
