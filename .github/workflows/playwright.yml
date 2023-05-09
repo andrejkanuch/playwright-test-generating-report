@@ -44,32 +44,32 @@ jobs:
           path: playwright/report/
           retention-days: 30
   merge:
-  name: Merge Reports
-  if: ${{ always() }}
-  needs: [test]
-  timeout-minutes: 60
-  permissions:
-    contents: read
-    pages: write
-    id-token: write
+    name: Merge Reports
+    if: ${{ always() }}
+    needs: [test]
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
 
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v3
-    - uses: actions/setup-node@v3
-      with:
-        node-version: 16
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
 
-    - name: Merge Playwright Reports
-      uses: sidharthv96/playwright-report-action@v1
-      with:
-        test_folders: playwright-report-1,playwright-report-2
-        output_folder: playwright-report-folder
-        delete_old_reports: true
+      - name: Merge Playwright Reports
+        uses: sidharthv96/playwright-report-action@v1
+        with:
+          test_folders: playwright-report-1,playwright-report-2
+          output_folder: playwright-report-folder
+          delete_old_reports: true
 
-    - uses: actions/upload-artifact@v3
-      if: ${{ always() }}
-      with:
-        name: combined-report
-        path: playwright-report-folder/
-        retention-days: 3
+      - uses: actions/upload-artifact@v3
+        if: ${{ always() }}
+        with:
+          name: combined-report
+          path: playwright-report-folder/
+          retention-days: 3
