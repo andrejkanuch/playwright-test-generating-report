@@ -52,15 +52,39 @@ jobs:
       contents: read
       pages: write
       id-token: write
+
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: sidharthv96/playwright-report-action
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+          node-version: 16
+      - name: Cache dependencies
+        uses: actions/cache@v2
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
+      - uses: actions/checkout@v2
+      - uses: actions/download-artifact@v3
+      - name: Download Merge HTML
+        run: npm install playwright-merge-html-reports --dev
+      - name: Run Report Merge
+        run: npm run merge-reports
       - uses: actions/upload-artifact@v3
-        if: ${{ always() }}
+        if: always()
         with:
           name: combined-report
           path: playwright-report-folder/
           retention-days: 3
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload entire repository
+          path: playwright-report-folder/
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
