@@ -55,7 +55,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v1
-      - uses: sidharthv96/playwright-report-action@main
+      - uses: sidharthv96/playwright-report-action
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
       - uses: actions/upload-artifact@v3
