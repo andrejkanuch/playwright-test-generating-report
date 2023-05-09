@@ -82,7 +82,7 @@ jobs:
         run: |
           PR_ID=${{ github.event.number }}
           mkdir -p combined-report/pr-${PR_ID}
-          cp -r playwright-report-folder/* combined-report/pr-${PR_ID}/
+          cp -r playwright-report-folder/merged-html-report/* combined-report/pr-${PR_ID}/
           git add combined-report/pr-${PR_ID}/index.html
           git commit -m "Publish combined report for PR ${PR_ID} to GitHub Pages" || echo "No changes to commit"
           git push
