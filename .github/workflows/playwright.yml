@@ -77,21 +77,17 @@ jobs:
           name: combined-report
           path: playwright-report-folder/
           retention-days: 3
-      - name: Print PR Number
-        run: echo "PR Number is ${{ github.event.pull_request.number }}"
-      - name: Print PR event
-        run: echo "PR Number is ${{ github.event }}"
+
       - name: Setup Pages
         uses: actions/configure-pages@v2
-        with:
-          path: './${{ github.event.pull_request.number }}' # This will create a directory based on the PR number
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: playwright-report-folder/merged-html-report
+      - name: Prepare files for deployment
+        run: |
+          mkdir -p test-andrej
+          cp -r playwright-report-folder/merged-html-report/* test-andrej/
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
         with:
-          target_branch: 'gh-pages/${{ github.event.pull_request.number }}' # This will push to a branch based on the PR number
+          # Upload the entire repository, which now includes the 'test-andrej' directory
+          path: .
 
