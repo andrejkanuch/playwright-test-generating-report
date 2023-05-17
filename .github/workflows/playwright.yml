@@ -87,10 +87,12 @@ jobs:
         with:
           name: prepared-files
           path: test-andrej
+          token: ${{ secrets.GITHUB_TOKEN }}
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
         with:
+          token: ${{ secrets.GITHUB_TOKEN }}
           artifact_name: prepared-files
 
 
