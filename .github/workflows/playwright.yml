@@ -46,7 +46,7 @@ jobs:
   merge-playwright-reports:
     name: Merge Playwright Reports
     if: ${{ always() }}
-    needs: [test-playwright]
+    needs: [test]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
