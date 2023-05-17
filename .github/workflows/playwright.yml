@@ -94,7 +94,7 @@ jobs:
       - name: Rename and upload artifact
         run: |
           PR_NUMBER=${{ github.event.pull_request.number }}
-          mv combined-report/merged-html-report index_${PR_NUMBER}.html
+          mv merged-html-report index_${PR_NUMBER}.html
           echo "Renamed merged-html-report to index_${PR_NUMBER}.html"
 
       - name: Deploy to GitHub Pages
