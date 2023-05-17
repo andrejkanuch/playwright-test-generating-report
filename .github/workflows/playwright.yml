@@ -77,24 +77,14 @@ jobs:
           name: combined-report
           path: playwright-report-folder/
           retention-days: 3
-  publish:
-      runs-on: ubuntu-latest
-      name: Publish reports
-      needs: [merge]
-      steps:
-        - name: Setup Pages
-          uses: actions/configure-pages@v2
-        - name: List files playwright-report-folder
-          run: ls -R playwright-report-folder
-        - name: List files playwright-report-folder/combined-report
-          run: ls -R playwright-report-folder/combined-report
-        - name: List files playwright-report-folder/combined-report/merged-html-report
-          run: ls -R playwright-report-folder/combined-report/merged-html-report
-        - name: Upload artifact
-          uses: actions/upload-pages-artifact@v1
-          with:
-            path: playwright-report-folder/combined-report/merged-html-report
-        - name: Deploy to GitHub Pages
-          id: deployment
-          uses: actions/deploy-pages@v1
 
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload entire repository
+          path: playwright-report-folder/merged-html-report
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
