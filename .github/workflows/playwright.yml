@@ -78,16 +78,19 @@ jobs:
           path: playwright-report-folder/
           retention-days: 3
 
-      - name: Setup Pages
-        uses: actions/configure-pages@v2
       - name: Prepare files for deployment
         run: |
           mkdir -p test-andrej
           cp -r playwright-report-folder/merged-html-report/* test-andrej/
+      - name: Upload prepared files
+        uses: actions/upload-artifact@v3
+        with:
+          name: prepared-files
+          path: test-andrej
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
         with:
-          # Upload the entire repository, which now includes the 'test-andrej' directory
-          path: .
+          artifact_name: prepared-files
+
 
