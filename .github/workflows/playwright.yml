@@ -84,6 +84,12 @@ jobs:
       steps:
         - name: Setup Pages
           uses: actions/configure-pages@v2
+        - name: List files playwright-report-folder
+          run: ls -R playwright-report-folder
+        - name: List files playwright-report-folder/combined-report
+          run: ls -R playwright-report-folder/combined-report
+        - name: List files playwright-report-folder/combined-report/merged-html-report
+          run: ls -R playwright-report-folder/combined-report/merged-html-report
         - name: Upload artifact
           uses: actions/upload-pages-artifact@v1
           with:
