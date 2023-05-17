@@ -43,32 +43,31 @@ jobs:
           name: playwright-report-${{ matrix.shard }}
           path: playwright/report/
           retention-days: 30
-  merge-playwright-reports:
-    name: Merge Playwright Reports
+  merge:
+    name: Merge Reports
     if: ${{ always() }}
     needs: [test]
+    timeout-minutes: 60
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - name: Cache npm and browsers
+      - name: Cache dependencies
         uses: actions/cache@v2
         with:
-          path: |
-            ~/.npm
-            ~/.cache/ms-playwright
-          key: ${{ runner.os }}-npm-browsers-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-npm-browsers-
-      - name: Download playwright artifacts    
-        uses: actions/download-artifact@v3
-        with:
-          name: playwright-report-1
+          path: ~/.npm
+          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-node-
+      - uses: actions/checkout@v2
       - uses: actions/download-artifact@v3
-        with:
-          name: playwright-report-2
-      - name: Download playwright-merge-html-reports
+      - name: Download Merge HTML
         run: npm install playwright-merge-html-reports --dev
       - name: Run Report Merge
         run: npm run merge-reports
@@ -77,31 +76,15 @@ jobs:
         with:
           name: combined-report
           path: playwright-report-folder/
-  publish-merged-report:
-    name: Publish Merged Report
-    needs: [merge-playwright-reports]
-    runs-on: ubuntu-latest
-    steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
+          retention-days: 3
 
-    - name: Download combined report
-      uses: actions/download-artifact@v2
-      with:
-        name: combined-report
-        path: .
-
-    - name: Rename and upload artifact
-      run: |
-        PR_NUMBER=${{ github.event.pull_request.number }}
-        mv combined-report/index.html index_${PR_NUMBER}.html
-        echo "Renamed index.html to index_${PR_NUMBER}.html"
-
-    - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: ./
-        publish_branch: gh-pages
-        enable_jekyll: false
-        
+      - name: Setup Pages
+        uses: actions/configure-pages@v2
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v1
+        with:
+          # Upload entire repository
+          path: playwright-report-folder/merged-html-report
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v1
