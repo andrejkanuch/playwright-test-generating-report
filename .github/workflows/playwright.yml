@@ -43,30 +43,39 @@ jobs:
           name: playwright-report-${{ matrix.shard }}
           path: playwright/report/
           retention-days: 30
-  merge:
-    name: Merge Reports
+  merge-playwright-reports:
+    name: Merge Playwright Reports
     if: ${{ always() }}
-    needs: [test]
-    timeout-minutes: 60
-    permissions:
-      contents: read
-      pages: write
-      id-token: write
-
+    needs: [test-playwright]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: actions/setup-node@v3
         with:
           node-version: 16
-      - name: Cache dependencies
+      - name: Cache npm and browsers
         uses: actions/cache@v2
         with:
-          path: ~/.npm
-          key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
-          restore-keys: ${{ runner.os }}-node-
+          path: |
+            ~/.npm
+            ~/.cache/ms-playwright
+          key: ${{ runner.os }}-npm-browsers-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: ${{ runner.os }}-npm-browsers-
+      - name: Download playwright artifacts    
+        uses: actions/download-artifact@v3
+        with:
+          name: playwright-report-1
       - uses: actions/download-artifact@v3
-      - name: Download Merge HTML
+        with:
+          name: playwright-report-2
+      - uses: actions/download-artifact@v3
+        with:
+          name: playwright-report-3
+      - uses: actions/download-artifact@v3
+        with:
+          name: playwright-report-4
+
+      - name: Download playwright-merge-html-reports
         run: npm install playwright-merge-html-reports --dev
       - name: Run Report Merge
         run: npm run merge-reports
@@ -75,28 +84,31 @@ jobs:
         with:
           name: combined-report
           path: playwright-report-folder/
-          retention-days: 3
+  publish-merged-report:
+    name: Publish Merged Report
+    needs: [merge-playwright-reports]
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v2
 
-      - name: Copy report to unique folder for PR
-        if: github.event_name == 'pull_request'
-        run: |
-          PR_ID=${{ github.event.number }}
-          mkdir -p combined-report/pr-${PR_ID}
-          cp -r playwright-report-folder/merged-html-report/* combined-report/pr-${PR_ID}/
-          git config --global user.email "kanuchandrej@gmail.com@example.com"
-          git config --global user.name "Andrej kanuch"
-          git fetch origin
-          git checkout gh-pages || git checkout -b gh-pages
-          git add combined-report/pr-${PR_ID}/index.html
-          git commit -m "Publish combined report for PR ${PR_ID} to GitHub Pages" || echo "No changes to commit"
-          git push
+    - name: Download combined report
+      uses: actions/download-artifact@v2
+      with:
+        name: combined-report
+        path: .
 
-      - name: Setup Pages 2
-        uses: actions/configure-pages@v2
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v1
-        with:
-          path: combined-report/
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v1
+    - name: Rename and upload artifact
+      run: |
+        PR_NUMBER=${{ github.event.pull_request.number }}
+        mv combined-report/index.html index_${PR_NUMBER}.html
+        echo "Renamed index.html to index_${PR_NUMBER}.html"
+
+    - name: Deploy to GitHub Pages
+      uses: peaceiris/actions-gh-pages@v3
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        publish_dir: ./
+        publish_branch: gh-pages
+        enable_jekyll: false
+        
