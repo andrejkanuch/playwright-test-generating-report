@@ -78,29 +78,15 @@ jobs:
           path: playwright-report-folder/
           retention-days: 3
   publish:
-      name: Publish Merged Report
-      needs: [merge]
       runs-on: ubuntu-latest
+      name: Publish reports
       steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Download combined report
-        uses: actions/download-artifact@v2
-        with:
-          name: combined-report
-          path: .
-
-      - name: Rename and upload artifact
-        run: |
-          PR_NUMBER=${{ github.event.pull_request.number }}
-          mv combined-report/merged-html-report index_${PR_NUMBER}.html
-          echo "Renamed merged-html-report to index_${PR_NUMBER}.html"
-
-      - name: Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./
-          publish_branch: gh-pages/${{ github.event.pull_request.number }} # Publish to a unique subdirectory for each PR
-          enable_jekyll: false
+        - name: Setup Pages
+          uses: actions/configure-pages@v2
+        - name: Upload artifact
+          uses: actions/upload-pages-artifact@v1
+          with:
+            path: playwright-report-folder/merged-html-report
+        - name: Deploy to GitHub Pages
+          id: deployment
+          uses: actions/deploy-pages@v1
