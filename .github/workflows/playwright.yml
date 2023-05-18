@@ -80,16 +80,10 @@ jobs:
 
       - name: Setup Pages
         uses: actions/configure-pages@v2
-      - name: Create directory if it does not exist
-        run: mkdir -p ./andrej-test
-      - name: List all folders
-        run: ls -R
-  
-
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: ./andrej-test
+          path: playwright-report-folder/merged-html-report
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
