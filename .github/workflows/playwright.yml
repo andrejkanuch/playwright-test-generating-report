@@ -79,18 +79,6 @@ jobs:
           name: combined-report
           path: playwright-report-folder/
           retention-days: 3
-      - name: Print PR Number
-        run: echo "PR Number is ${{ github.event.pull_request.number }}"
-      - name: Print PR event
-        run: echo "PR Number is ${{ github.event }}"
-      - uses: actions/upload-artifact@v3
-        if: always()
-        with:
-          name: combined-report
-          path: playwright-report-folder/playwright-report-1/index.html
-          retention-days: 3
-      - name: Print PR Number
-        run: echo "PR Number is ${{ github.event.pull_request.number }}"
       - name: Print PR event
         run: echo "PR Number is ${{ github.event }}"
       - name: Deploy to GitHub Pages
@@ -98,4 +86,3 @@ jobs:
         uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
           branch: gh-pages
-          folder: ./playwright-report-1
