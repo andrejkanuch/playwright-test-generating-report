@@ -92,6 +92,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
-        with:
-          target_branch: 'gh-pages/${{ github.event.pull_request.number }}' # This will push to a branch based on the PR number
     
