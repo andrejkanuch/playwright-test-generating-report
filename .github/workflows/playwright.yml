@@ -5,7 +5,8 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
-
+permissions:
+  contents: write
 jobs:
   test:
     timeout-minutes: 60
@@ -49,9 +50,10 @@ jobs:
     needs: [test]
     timeout-minutes: 60
     permissions:
-      contents: read
+      contents: write
       pages: write
       id-token: write
+      
 
     runs-on: ubuntu-latest
     steps:
