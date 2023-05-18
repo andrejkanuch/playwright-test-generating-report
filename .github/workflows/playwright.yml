@@ -77,7 +77,10 @@ jobs:
           name: combined-report
           path: playwright-report-folder/
           retention-days: 3
-
+      - name: Create directory and generate HTML
+        run: |
+          mkdir reports2
+          echo "<!DOCTYPE html><html><body><h1>Hello, world!</h1></body></html>" > reports2/index.html
       - name: Setup Pages
         uses: actions/configure-pages@v2
       - name: List all folders
@@ -85,7 +88,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: playwright-report-folder/andrej-test/merged-html-report
+          path: reports2
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
