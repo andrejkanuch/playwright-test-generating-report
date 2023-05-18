@@ -5,5 +5,5 @@ mergeHTMLReports(
     process.cwd() + "/playwright-report-1",
     process.cwd() + "/playwright-report-2",
   ],
-  { outputBasePath: process.cwd() + "/playwright-report-folder" }
+  { outputBasePath: process.cwd() + "/playwright-report-folder/andrej-test" }
 );
