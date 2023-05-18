@@ -81,10 +81,6 @@ jobs:
         run: echo "PR Number is ${{ github.event.pull_request.number }}"
       - name: Print PR event
         run: echo "PR Number is ${{ github.event }}"
-      - name: Setup Pages
-        uses: actions/configure-pages@v2
-        with:
-          path: './${{ github.event.pull_request.number }}' # This will create a directory based on the PR number
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
