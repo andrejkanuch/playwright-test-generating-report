@@ -75,7 +75,7 @@ jobs:
         if: always()
         with:
           name: combined-report
-          path: playwright-report-folder/
+          path: andrej-test/
           retention-days: 3
 
       - name: Setup Pages
@@ -85,7 +85,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v1
         with:
-          path: playwright-report-folder/merged-html-report
+          path: andrej-test/
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v1
