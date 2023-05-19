@@ -101,10 +101,9 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: combined-report
-          path: ./playwright-report-folder
+          path: ./playwright-report-folder/PR${{ github.event.pull_request.number }}
       - name: Create PR folder and dummy index.html
         run: |
-          mkdir "./playwright-report-folder/PR${{ github.event.pull_request.number }}"
           echo "<h1>Hello, World!</h1>" > "./playwright-report-folder/PR${{ github.event.pull_request.number }}/index.html"
       - name: List all folders and subfolders
         run: ls -R     
