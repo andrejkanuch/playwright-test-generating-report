@@ -44,6 +44,7 @@ jobs:
           name: playwright-report-${{ matrix.shard }}
           path: playwright/report/
           retention-days: 30
+
   merge:
     name: Merge Reports
     if: ${{ always() }}
@@ -53,7 +54,6 @@ jobs:
       contents: write
       pages: write
       id-token: write
-      
 
     runs-on: ubuntu-latest
     steps:
@@ -81,8 +81,27 @@ jobs:
           retention-days: 3
       - name: Print PR event
         run: echo "PR Number is ${{ github.event }}"
-      - name: Deploy to GitHub Pages
-        id: deployment
+
+  deploy:
+    name: Deploy to GitHub Pages
+    if: ${{ always() }}
+    needs: [merge]
+    timeout-minutes: 60
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - uses: actions/download-artifact@v3
+        with:
+          name: combined-report
+      - id: deployment
         uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
           branch: gh-pages
