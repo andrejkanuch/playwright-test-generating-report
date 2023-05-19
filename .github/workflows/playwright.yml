@@ -101,15 +101,15 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: combined-report
-          path: .reports/PR${{ github.event.pull_request.number }}/playwright-report-folder
+          path: ./playwright-report-folder/PR${{ github.event.pull_request.number }}
       - name: Create PR folder and dummy index.html
         run: |
-          echo "<h1>Hello, World!</h1>" > ".reports/PR${{ github.event.pull_request.number }}/playwright-report-folder/index.html"
+          echo "<h1>Hello, World!</h1>" > "./playwright-report-folder/PR${{ github.event.pull_request.number }}/index.html"
       - name: List all folders and subfolders
         run: ls -R     
       - id: deployment
         uses: JamesIves/github-pages-deploy-action@4.1.5
         with:
           branch: gh-pages
-          folder: ./reports
+          folder: ./playwright-report-folder
 
