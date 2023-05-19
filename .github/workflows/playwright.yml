@@ -101,6 +101,7 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: combined-report
+          path: ./playwright-report-folder
       - name: List all folders and subfolders
         run: ls -R     
       - id: deployment
