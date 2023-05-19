@@ -102,6 +102,10 @@ jobs:
         with:
           name: combined-report
           path: ./playwright-report-folder
+      - name: Create PR folder and dummy index.html
+        run: |
+          mkdir "./playwright-report-folder/PR${{ github.event.pull_request.number }}"
+          echo "<h1>Hello, World!</h1>" > "./playwright-report-folder/PR${{ github.event.pull_request.number }}/index.html"
       - name: List all folders and subfolders
         run: ls -R     
       - id: deployment
@@ -109,3 +113,4 @@ jobs:
         with:
           branch: gh-pages
           folder: ./playwright-report-folder
+
