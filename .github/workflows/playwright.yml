@@ -106,10 +106,11 @@ jobs:
         run: |
           echo "<h1>Hello, World!</h1>" > "./playwright-report-folder/PR${{ github.event.pull_request.number }}/index.html"
       - name: List all folders and subfolders
-        run: ls -R     
-      - id: deployment
-        uses: JamesIves/github-pages-deploy-action@4.1.5
+        run: ls -R
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
         with:
-          branch: gh-pages
-          folder: ./playwright-report-folder
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./playwright-report-folder
+          keep_files: true  
 
