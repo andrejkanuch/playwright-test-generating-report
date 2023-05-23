@@ -121,7 +121,7 @@ jobs:
                 function login() {
                   var password = document.getElementById('password').value;
                   var hash = sha1(password);
-                  var url = hash + '/index.html';
+                  var url = '/protected-content/PR${{ github.event.pull_request.number }}/' + hash + '/index.html';
                   var request = new XMLHttpRequest();
                   request.open('GET', url, true);
                   request.onload = function() {
@@ -135,7 +135,7 @@ jobs:
                 }
               </script>
             </body>
-          </html>" > "./protected-content/PR${{ github.event.pull_request.number }}/index.html"
+          </html>" > "./playwright-report-folder/PR${{ github.event.pull_request.number }}/index.html"
       - name: List all folders and subfolders
         run: ls -R
       - name: Deploy
