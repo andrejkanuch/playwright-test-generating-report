@@ -135,7 +135,7 @@ jobs:
                 }
               </script>
             </body>
-          </html>" > "./playwright-report-folder/PR${{ github.event.pull_request.number }}/index.html"
+          </html>" > "./protected-content/PR${{ github.event.pull_request.number }}/index.html"
       - name: List all folders and subfolders
         run: ls -R
       - name: Deploy
