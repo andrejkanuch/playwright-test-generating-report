@@ -110,7 +110,8 @@ jobs:
       - name: Create Password Protected Content Folder
         run: |
           mkdir -p "./playwright-report-folder/PR${{ github.event.pull_request.number }}/14b1b6a051b82d55e9aa6aaa417dffee893497f9" # replace with your hash
-          cp -r playwright-report-folder "./playwright-report-folder/PR${{ github.event.pull_request.number }}/14b1b6a051b82d55e9aa6aaa417dffee893497f9"
+          cp -r ./playwright-report-folder/* "./playwright-report-folder/PR${{ github.event.pull_request.number }}/14b1b6a051b82d55e9aa6aaa417dffee893497f9"
+
       - name: Create Login Page
         run: |
           echo "<html>
