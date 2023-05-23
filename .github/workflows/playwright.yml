@@ -109,8 +109,6 @@ jobs:
           echo "<h1>Hello, World!</h1>" > "./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}/index.html"
       - name: Protect index.html with PageCrypt
         run: npx pagecrypt "./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}/index.html" "./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}/index.html" ${{ secrets.PAGECRYPT_PASSWORD }}
-      - name: List all folders and subfolders
-        run: ls -R
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
