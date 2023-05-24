@@ -95,8 +95,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0   # Fetch all history
       - uses: actions/setup-node@v3
         with:
           node-version: 16
@@ -105,35 +103,18 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: combined-report
-          path: ./reports/PR${{ github.event.pull_request.number }}
-      - name: Create/Update PR folder and dummy index.html
+          path: ./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}
+      - name: Create PR folder and dummy index.html
         run: |
-          mkdir -p "./reports/PR${{ github.event.pull_request.number }}"
-          echo "<h1>Hello, World!</h1>" > "./reports/PR${{ github.event.pull_request.number }}/index.html"
+          echo "<h1>Hello, World!</h1>" > "./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}/index.html"
       - name: Protect index.html with PageCrypt
-        run: npx pagecrypt "./reports/PR${{ github.event.pull_request.number }}/index.html" "./reports/PR${{ github.event.pull_request.number }}/index.html" ${{ secrets.PAGECRYPT_PASSWORD }}
-      - name: Copy report to temporary directory
-        run: |
-          mkdir temp
-          cp -r ./reports/* temp/
-      - name: Create gh-pages branch if not exists
-        run: |
-          git fetch origin
-          git branch -a | grep -q remotes/origin/gh-pages || git branch gh-pages origin/gh-pages || git checkout -b gh-pages
-          
-      - name: Checkout gh-pages
-        run: |
-          git fetch origin
-          git checkout gh-pages --force
-      - name: Move files from temporary directory to working directory
-        run: |
-          cp -r ./temp/* .
-      - name: Configure Git
-        run: |
-          git config user.name "andrej.kanuch"
-          git config user.email "andrej.kanuch@sudolabs.io"
-      - name: Commit and Push to gh-pages
-        run: |
-          git add .
-          git commit -m "Update Playwright tests results PR${{ github.event.pull_request.number }}"
-          git push origin gh-pages
+        run: npx pagecrypt "./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}/index.html" "./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}/index.html" ${{ secrets.PAGECRYPT_PASSWORD }}
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./playwright-report-folder
+          keep_files: true
+
+
+
