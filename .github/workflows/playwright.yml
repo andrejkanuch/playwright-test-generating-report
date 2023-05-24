@@ -103,12 +103,12 @@ jobs:
       - uses: actions/download-artifact@v3
         with:
           name: combined-report
-          path: ./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}
+          path: ./reports/PR${{ github.event.pull_request.number }}
       - name: Create PR folder and dummy index.html
         run: |
-          echo "<h1>Hello, World!</h1>" > "./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}/index.html"
+          echo "<h1>Hello, World!</h1>" > "./reports/PR${{ github.event.pull_request.number }}/index.html"
       - name: Protect index.html with PageCrypt
-        run: npx pagecrypt "./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}/index.html" "./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}/index.html" ${{ secrets.PAGECRYPT_PASSWORD }}
+        run: npx pagecrypt "./reports/PR${{ github.event.pull_request.number }}/index.html" "./reports/PR${{ github.event.pull_request.number }}/index.html" ${{ secrets.PAGECRYPT_PASSWORD }}
       - name: Configure Git
         run: |
           git config user.name "andrej.kanuch"
@@ -116,8 +116,8 @@ jobs:
       - name: Commit and Push to gh-pages
         run: |
           git checkout -B gh-pages
-          git add -f ./playwright-report-folder
-          git commit -m "Update GitHub Pages"
+          git add -f ./reports
+          git commit -m "Update Playwright tests results PR${{ github.event.pull_request.number }}"
           git push -f origin gh-pages
 
 
