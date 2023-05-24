@@ -106,8 +106,9 @@ jobs:
         with:
           name: combined-report
           path: ./reports/PR${{ github.event.pull_request.number }}
-      - name: Create PR folder and dummy index.html
+      - name: Create/Update PR folder and dummy index.html
         run: |
+          mkdir -p "./reports/PR${{ github.event.pull_request.number }}"
           echo "<h1>Hello, World!</h1>" > "./reports/PR${{ github.event.pull_request.number }}/index.html"
       - name: Protect index.html with PageCrypt
         run: npx pagecrypt "./reports/PR${{ github.event.pull_request.number }}/index.html" "./reports/PR${{ github.event.pull_request.number }}/index.html" ${{ secrets.PAGECRYPT_PASSWORD }}
@@ -119,7 +120,6 @@ jobs:
         run: |
           git fetch origin
           git checkout gh-pages --force
-
       - name: Move files from temporary directory to working directory
         run: |
           cp -r ./temp/* .
