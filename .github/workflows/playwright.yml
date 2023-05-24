@@ -116,6 +116,11 @@ jobs:
         run: |
           mkdir temp
           cp -r ./reports/* temp/
+      - name: Create gh-pages branch if not exists
+        run: |
+          git fetch origin
+          git branch -a | grep -q remotes/origin/gh-pages || git branch gh-pages origin/gh-pages || git checkout -b gh-pages
+          
       - name: Checkout gh-pages
         run: |
           git fetch origin
