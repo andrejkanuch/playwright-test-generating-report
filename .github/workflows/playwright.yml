@@ -5,7 +5,8 @@ on:
     branches: [main, master]
   pull_request:
     branches: [main, master]
-
+permissions:
+  contents: write
 jobs:
   test:
     timeout-minutes: 60
@@ -20,7 +21,7 @@ jobs:
         with:
           node-version: 16
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -28,7 +29,7 @@ jobs:
       - name: Install dependencies
         run: npm ci
       - name: Cache browsers
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.cache/ms-playwright
           key: ${{ runner.os }}-browsers-${{ hashFiles('**/package-lock.json') }}
@@ -43,13 +44,14 @@ jobs:
           name: playwright-report-${{ matrix.shard }}
           path: playwright/report/
           retention-days: 30
+
   merge:
     name: Merge Reports
     if: ${{ always() }}
     needs: [test]
     timeout-minutes: 60
     permissions:
-      contents: read
+      contents: write
       pages: write
       id-token: write
 
@@ -60,7 +62,7 @@ jobs:
         with:
           node-version: 16
       - name: Cache dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         with:
           path: ~/.npm
           key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
@@ -77,3 +79,47 @@ jobs:
           name: combined-report
           path: playwright-report-folder/
           retention-days: 3
+      - name: Print PR event
+        run: echo "PR Number is ${{ github.event }}"
+
+  deploy:
+    name: Deploy to GitHub Pages
+    if: ${{ always() }}
+    needs: [merge]
+    timeout-minutes: 60
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+      - name: Install PageCrypt
+        run: npm install pagecrypt --save-dev
+      - uses: actions/download-artifact@v3
+        with:
+          name: combined-report
+          path: ./reports/PR${{ github.event.pull_request.number }}
+      - name: Create PR folder and dummy index.html
+        run: |
+          echo "<h1>Hello, World!</h1>" > "./reports/PR${{ github.event.pull_request.number }}/index.html"
+      - name: Protect index.html with PageCrypt
+        run: npx pagecrypt "./reports/PR${{ github.event.pull_request.number }}/index.html" "./reports/PR${{ github.event.pull_request.number }}/index.html" ${{ secrets.PAGECRYPT_PASSWORD }}
+      - name: Configure Git
+        run: |
+          git config user.name "andrej.kanuch"
+          git config user.email "andrej.kanuch@sudolabs.io"
+      - name: Commit and Push to gh-pages
+        run: |
+          git checkout -B gh-pages
+          git add -f ./reports
+          git commit -m "Update Playwright tests results PR${{ github.event.pull_request.number }}"
+          git push -f origin gh-pages
+
+
+
+
