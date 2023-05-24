@@ -118,7 +118,8 @@ jobs:
       - name: Checkout gh-pages
         run: |
           git fetch origin
-          git checkout gh-pages
+          git checkout gh-pages --force
+
       - name: Move files from temporary directory to working directory
         run: |
           cp -r ./temp/* .
