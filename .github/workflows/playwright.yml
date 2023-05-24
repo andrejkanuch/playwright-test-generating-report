@@ -111,11 +111,17 @@ jobs:
           echo "<h1>Hello, World!</h1>" > "./reports/PR${{ github.event.pull_request.number }}/index.html"
       - name: Protect index.html with PageCrypt
         run: npx pagecrypt "./reports/PR${{ github.event.pull_request.number }}/index.html" "./reports/PR${{ github.event.pull_request.number }}/index.html" ${{ secrets.PAGECRYPT_PASSWORD }}
-      - name: Checkout gh-pages and copy report
+      - name: Copy report to temporary directory
+        run: |
+          mkdir temp
+          cp -r ./reports/* temp/
+      - name: Checkout gh-pages
         run: |
           git fetch origin
           git checkout gh-pages
-          cp -r ./reports/* .
+      - name: Move files from temporary directory to working directory
+        run: |
+          cp -r ./temp/* .
       - name: Configure Git
         run: |
           git config user.name "andrej.kanuch"
@@ -125,7 +131,3 @@ jobs:
           git add .
           git commit -m "Update Playwright tests results PR${{ github.event.pull_request.number }}"
           git push origin gh-pages
-
-
-
-
