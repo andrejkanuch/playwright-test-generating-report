@@ -106,7 +106,7 @@ jobs:
           path: ./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}
       - name: Create PR folder and dummy index.html
         run: |
-          echo "<h1>Hello, World!</h1>" > "./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}/index.html"
+          echo "<h1>Hello, World! PR${{ github.event.pull_request.number }} folder protected </h1>" > "./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}/index.html"
       - name: Protect index.html with PageCrypt
         run: npx pagecrypt "./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}/index.html" "./playwright-report-folder/reports/PR${{ github.event.pull_request.number }}/index.html" ${{ secrets.PAGECRYPT_PASSWORD }}
       - name: Deploy
